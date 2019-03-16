@@ -10,6 +10,6 @@
     <include file="$(find spaceship_control)/launch/inverse_kinematics_node.launch"/>
 
     <!-- Motors Driver -->
-    <!--include file="$(find spaceship_control)/launch/motors_driver_node.launch"/-->
+    <include file="$(find spaceship_control)/launch/motors_driver_node.launch"/>
 
 </launch>
