@@ -1,0 +1,2 @@
+joy_mapper:spaceship_control:spaceship_msgs
+-DCATKIN_DEVEL_PREFIX=/home/ubuntu/subt_spaceship/devel -DCMAKE_INSTALL_PREFIX=/home/ubuntu/subt_spaceship/install -G Unix Makefiles

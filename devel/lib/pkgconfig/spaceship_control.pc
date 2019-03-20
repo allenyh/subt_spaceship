@@ -1,0 +1,8 @@
+prefix=/home/ubuntu/subt_spaceship/devel
+
+Name: spaceship_control
+Description: Description of spaceship_control
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/ubuntu/subt_spaceship/devel/lib 
+Requires: 

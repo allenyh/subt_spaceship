@@ -1,0 +1,8 @@
+prefix=/home/ubuntu/subt_spaceship/devel
+
+Name: spaceship_msgs
+Description: Description of spaceship_msgs
+Version: 0.0.0
+Cflags: -I/home/ubuntu/subt_spaceship/devel/include
+Libs: -L/home/ubuntu/subt_spaceship/devel/lib 
+Requires: 

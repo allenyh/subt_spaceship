@@ -1,0 +1,8 @@
+prefix=/home/ubuntu/subt_spaceship/install
+
+Name: joy_mapper
+Description: Description of joy_mapper
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/ubuntu/subt_spaceship/install/lib 
+Requires: 

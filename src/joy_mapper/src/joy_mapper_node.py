@@ -4,6 +4,7 @@ import math
 
 from spaceship_msgs.msg import Twist2D
 from sensor_msgs.msg import Joy
+from spaceship_msgs.msg import AltitudeCmd
 
 from __builtin__ import True
 
@@ -19,9 +20,10 @@ class JoyMapper(object):
         self.v_gain = self.setupParam("~speed_gain", 0.41)
         self.omega_gain = self.setupParam("~steer_gain", 8.3)
 
+	self.al_msg = AltitudeCmd()
         # Publications
         self.pub_vel_cmd = rospy.Publisher("/spaceship/vel_cmd", Twist2D, queue_size=1)
-
+	self.pub_altitude_cmd = rospy.Publisher("/spaceship/altitude_cmd", AltitudeCmd, queue_size=1)
         # Subscriptions
         self.sub_joy_ = rospy.Subscriber("joy", Joy, self.cbJoy, queue_size=1)
 
@@ -34,18 +36,18 @@ class JoyMapper(object):
     def cbJoy(self, joy_msg):
         self.joy = joy_msg
         self.publishControl()
-        #self.processButtons(joy_msg)
+        self.processButtons(joy_msg)
 
     def publishControl(self):
         car_cmd_msg = Twist2D()
-        car_cmd_msg.v = self.joy.axes[1] * self.v_gain #Left stick V-axis. Up is positive
+        car_cmd_msg.v = self.joy.axes[1] * self.v_gain  #Left stick V-axis. Up is positive
         car_cmd_msg.omega = self.joy.axes[3] * self.omega_gain
         self.pub_vel_cmd.publish(car_cmd_msg)
 
 # Button List index of joy.buttons array:
-# 0: A 
-# 1: B 
-# 2: X 
+# 0: X
+# 1: A 
+# 2: B 
 # 3: Y 
 # 4: Left Back 
 # 5: Right Back
@@ -56,26 +58,27 @@ class JoyMapper(object):
 # 10: Right joystick
 
 # XXX: here we should use constants
-    '''def processButtons(self, joy_msg):
+    def processButtons(self, joy_msg):
         # Button A
-        if (joy_msg.buttons[0] == 1):
-            self.deep_learning ^= True
-            deep_lane_following_msg = BoolStamped()
-            rospy.loginfo('start deep learning lane following')
-            deep_lane_following_msg.header.stamp = self.joy.header.stamp
-            deep_lane_following_msg.data = self.deep_learning
-            self.pub_deep_lane_following.publish(deep_lane_following_msg) 
+        if (joy_msg.buttons[1] == 1):
+            altitude_msg = AltitudeCmd()
+	    altitude_msg.vel_up = -1
+
+            self.pub_altitude_cmd.publish(altitude_msg) 
 
         # Y button
         elif (joy_msg.buttons[3] == 1):
-            anti_instagram_msg = BoolStamped()
-            anti_instagram_msg.header.stamp = self.joy.header.stamp
-            anti_instagram_msg.data = True
-            rospy.loginfo('anti_instagram message')
-            self.pub_anti_instagram.publish(anti_instagram_msg)
+            altitude_msg = AltitudeCmd()
+            altitude_msg.vel_up = 1
 
+            self.pub_altitude_cmd.publish(altitude_msg)  
+	else:
+	    altitude_msg = AltitudeCmd()
+            altitude_msg.vel_up = 0
+
+            self.pub_altitude_cmd.publish(altitude_msg)
         # Left back button
-        elif (joy_msg.buttons[4] == 1):
+        '''elif (joy_msg.buttons[4] == 1):
             self.state_parallel_autonomy ^= True
             rospy.loginfo('state_parallel_autonomy = %s' % self.state_parallel_autonomy)
             parallel_autonomy_msg = BoolStamped()

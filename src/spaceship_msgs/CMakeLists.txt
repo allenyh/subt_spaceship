@@ -53,6 +53,7 @@ add_message_files(
   FILES
   MotorsCmd.msg
   Twist2D.msg
+  AltitudeCmd.msg
 )
 
 ## Generate services in the 'srv' folder

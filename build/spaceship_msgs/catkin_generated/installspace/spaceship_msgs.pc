@@ -1,0 +1,8 @@
+prefix=/home/ubuntu/subt_spaceship/install
+
+Name: spaceship_msgs
+Description: Description of spaceship_msgs
+Version: 0.0.0
+Cflags: -I/home/ubuntu/subt_spaceship/install/include
+Libs: -L/home/ubuntu/subt_spaceship/install/lib 
+Requires: 
