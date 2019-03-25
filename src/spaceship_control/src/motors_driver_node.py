@@ -36,7 +36,7 @@ class MotorsDriverNode(object):
 	self.throttle = 0
 	self.throttle_dir = 0
 
-	self.pauseTime = 0.02
+	self.pauseTime = 0.1
 
         # Setup subscribers
         self.sub_topic = rospy.Subscriber("/spaceship/motors_cmd", MotorsCmd, self.cbMotorsCmd, queue_size=1)
@@ -51,6 +51,14 @@ class MotorsDriverNode(object):
 	self.motorhat.set_pwm(channel, 0, 4096)
 	time.sleep(self.pauseTime)
 	self.motorhat.set_pwm(channel, 0, 2048)
+	time.sleep(self.pauseTime)
+
+    def setupBoth(self, channel1, channel2):
+	self.motorhat.set_pwm(channel1, 0, 4096)
+	self.motorhat.set_pwm(channel2, 0, 4096)
+	time.sleep(self.pauseTime)
+	self.motorhat.set_pwm(channel1, 0, 2048)
+	self.motorhat.set_pwm(channel2, 0, 2048)
 	time.sleep(self.pauseTime)
 
     def cdAltitudeCmd(self, msg):
@@ -71,8 +79,7 @@ class MotorsDriverNode(object):
 	    if self.throttle <= 0:
 		self.set_pwm_pulsewidth(self.left_down_esc, 0)
 		self.set_pwm_pulsewidth(self.right_down_esc, 0)
-		self.setup(self.left_up_esc)
-		self.setup(self.right_up_esc)
+		self.setupBoth(self.left_up_esc, self.right_up_esc)
 		
 	    self.set_pwm_pulsewidth(self.left_up_esc, v)
 	    self.set_pwm_pulsewidth(self.right_up_esc, v)
@@ -83,8 +90,7 @@ class MotorsDriverNode(object):
 	    if self.throttle >= 0:
                 self.set_pwm_pulsewidth(self.left_up_esc, 0)
                 self.set_pwm_pulsewidth(self.right_up_esc, 0)
-                self.setup(self.left_down_esc)
-                self.setup(self.right_down_esc)
+                self.setupBoth(self.left_down_esc, self.right_down_esc)
 		
             self.set_pwm_pulsewidth(self.left_down_esc, v)
             self.set_pwm_pulsewidth(self.right_down_esc, v)
@@ -99,15 +105,18 @@ class MotorsDriverNode(object):
 	self.throttle = new_throttle
 
     def cbMotorsCmd(self,msg):
-        self.leftSpeed = 700 * msg.vel_front_left
-        self.rightSpeed = 700 *  msg.vel_front_right
+        self.leftSpeed = 800 * msg.vel_front_left
+        self.rightSpeed = 800 *  msg.vel_front_right
+	leftOffset = 1400
+	rightOffset = 1400
+
 #	print("[ left: ", self.leftSpeed, " right: ", self.rightSpeed, "]")	
 	vr = 0
 	vl = 0
 
         if self.leftSpeed < 0:
 #	    print("left - backward")
-            vl = abs(self.leftSpeed) + 1300
+            vl = abs(self.leftSpeed) + leftOffset
 	    if self.leftDir != -1:
 		self.set_pwm_pulsewidth(self.left_forward_esc, 0)
 		time.sleep(self.pauseTime)
@@ -123,7 +132,7 @@ class MotorsDriverNode(object):
                 self.setup(self.left_forward_esc)
             self.leftDir = 1
 
-            vl = abs(self.leftSpeed) + 1300
+            vl = abs(self.leftSpeed) + leftOffset
             self.set_pwm_pulsewidth(self.left_forward_esc, vl)
 	else:
 	    self.leftDir = 0
@@ -139,7 +148,7 @@ class MotorsDriverNode(object):
                 self.setup(self.right_backward_esc)
             self.rightDir = -1
 
-            vr = abs(self.rightSpeed) + 1300
+            vr = abs(self.rightSpeed) + rightOffset
             self.set_pwm_pulsewidth(self.right_backward_esc, vr)
         elif self.rightSpeed > 0:
 #	    print("left - forward")
@@ -149,7 +158,7 @@ class MotorsDriverNode(object):
                 self.setup(self.right_forward_esc)
             self.rightDir = 1
 
-            vr = abs(self.rightSpeed) + 1300
+            vr = abs(self.rightSpeed) + rightOffset
             self.set_pwm_pulsewidth(self.right_forward_esc, vr)
 	else:
             self.rightDir = 0
